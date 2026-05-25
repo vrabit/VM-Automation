@@ -1,0 +1,6 @@
+[
+    {   "type": "LOW_SHELF", "freq": 70,      "q": 0.7,   "low_gain": 6,      "high_gain": 1 },
+    {   "type": "BELL",      "freq": 180,     "q": 1.0,   "low_gain": 2,      "high_gain": 0 },
+    {   "type": "BELL",      "freq": 850,     "q": 1.0,   "low_gain": -1.5,   "high_gain": 0 },
+    {   "type": "HIGH_SHELF","freq": 12000,   "q": 0.6,   "low_gain": 3,      "high_gain": 1 }
+]
