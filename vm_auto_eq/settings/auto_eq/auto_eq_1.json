@@ -1,0 +1,7 @@
+{     
+    "bus_index": 1,
+    "MIN_DB":   -60,
+    "MAX_DB":   -10,
+    "alpha_loud": 0.99,
+    "alpha_quiet":0.03
+}

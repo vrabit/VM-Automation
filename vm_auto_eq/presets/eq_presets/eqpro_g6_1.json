@@ -1,0 +1,49 @@
+[
+    {
+        "type": "HIGH_PASS",
+        "freq": 30,
+        "q": 3.0,
+        "low_gain": 0,
+        "high_gain": 0
+    },
+
+    {
+        "type": "BELL",
+        "freq": 535,
+        "q": 3.0,
+        "low_gain": 0,
+        "high_gain": 0
+    },
+
+    {
+        "type": "BELL",
+        "freq": 800,
+        "q": 3.0,
+        "low_gain": 0,
+        "high_gain": 0
+    },
+
+    {
+        "type": "BELL",
+        "freq": 1780,
+        "q": 0.0,
+        "low_gain": 0,
+        "high_gain": 0
+    },
+
+    {
+        "type": "NOTCH",
+        "freq": 2060,
+        "q": 2.3,
+        "low_gain": 0.0,
+        "high_gain": 0
+    },
+
+    {
+        "type": "LOW_PASS",
+        "freq": 8250,
+        "q": 0.0,
+        "low_gain": 0,
+        "high_gain": 0
+    }
+]

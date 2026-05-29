@@ -11,3 +11,15 @@ BASE_PRESETS_DIR = VM_AUTO_EQ_DIR / "presets"
 # eqpro presets
 EQ_PRO_TEMPLATE = 'eqpro_g6_{i}.json'
 EQ_PRESETS_DIR = BASE_PRESETS_DIR / "eq_presets"
+
+
+# settings
+SETTINGS_DIR = VM_AUTO_EQ_DIR / "settings"
+
+# auto_eq settings
+AUTO_EQ_SETTINGS_DIR = SETTINGS_DIR / "auto_eq"
+AUTO_EQ_FILENAME = "auto_eq_{i}.json"
+
+# gain_compensation
+GAIN_COMP_SETTINGS_DIR = SETTINGS_DIR / "gain_compensation"
+GAIN_COMP_CONFIG_FILENAME = "CompensationConfig.json"

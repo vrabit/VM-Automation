@@ -136,8 +136,8 @@ VOICEMEETER_EQ_PARAMS = {
     },
     "eq_type": {
         "BELL":         "0",
-        "BAND_PASS":    "1",
-        "NOTCH":        "2",
+        "NOTCH":        "1",
+        "BAND_PASS":    "2",
         "LOW_PASS":     "3",
         "HIGH_PASS":    "4",
         "LOW_SHELF":    "5",

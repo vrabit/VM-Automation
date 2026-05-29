@@ -1,5 +1,3 @@
-
-
 import vm_auto_eq.params.vm_params as VM_P
 
 import voicemeeterlib

@@ -1,0 +1,6 @@
+{     
+    "source_bus" : 0,
+    "target_strip" :2,
+    "strength" : 1,
+    "threshold" : 0.2
+}
