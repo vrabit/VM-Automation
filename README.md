@@ -43,7 +43,7 @@ Supports:
 
 # Planned Features
 
-* Lightweight local web UI
+* Lightweight local ui
 * Configurable automation routing
 * User-defined EQ profiles
 * Preset/profile management
