@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "numpy>=2.4.6",
+    "pyside6>=6.11.1",
     "voicemeeter-api>=2.7.2",
 ]

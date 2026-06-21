@@ -27,6 +27,16 @@ class VMController:
         if self.vm is not None:
             self.vm.logout()
             self.vm = None
+
+    def connect(self):
+        self.vm = voicemeeterlib.api("potato")
+        self.vm.login()
+        return self 
+
+    def disconnect(self):
+        if self.vm is not None:
+            self.vm.logout()
+            self.vm = None
         
     async def wait_for_update(self):
         if self.vm.pdirty:

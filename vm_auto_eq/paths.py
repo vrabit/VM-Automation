@@ -23,3 +23,10 @@ AUTO_EQ_FILENAME = "auto_eq_{i}.json"
 # gain_compensation
 GAIN_COMP_SETTINGS_DIR = SETTINGS_DIR / "gain_compensation"
 GAIN_COMP_CONFIG_FILENAME = "CompensationConfig.json"
+
+# ui_assets
+UI_DIR = VM_AUTO_EQ_DIR / "ui"
+UI_ASSETS_DIR = UI_DIR / "assets"
+TRAY_ICON_24 = UI_ASSETS_DIR / "tray_icon_24.png"
+TRAY_ICON_32 = UI_ASSETS_DIR / "tray_icon_32.png"
+TRAY_ICON_256 = UI_ASSETS_DIR / "tray_icon_256.png"
