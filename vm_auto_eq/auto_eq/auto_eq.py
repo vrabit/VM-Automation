@@ -42,6 +42,21 @@ class EQConfig:
     @classmethod
     def to_dict(self):
         return asdict(self)
+    
+@dataclass(frozen=True)
+class AutoEQRuntimeState:
+    previous_normalized_gain: float | None = field(default_factory=float)
+    smoothed_gain: float = field(default_factory=float)
+    preset: dict = field(default_factory=dict)
+    enabled: bool = field(default_factory=bool)
+
+    @classmethod
+    def from_dict(cls, data:dict):
+        return cls(**data)
+
+    @classmethod
+    def to_dict(self):
+        return asdict(self)
 
 
 class AutoEq:
@@ -49,30 +64,38 @@ class AutoEq:
         self.controller = controller
         self.eq_config = eq_config
 
+        self.runtime_state: AutoEQRuntimeState = AutoEQRuntimeState.from_dict({
+            "previous_normalized_gain" : None,
+            "smoothed_gain" : None,
+            "preset" : self._load_eq(self.eq_config.bus_index),
+            "enabled" : False
+        })
+
+        self.enabled = True
         self.previous_normalized_gain = None
         self.smoothed_gain = None
-        self.preset = self.load_eq(self.eq_config.bus_index)
+        self.preset = self._load_eq(self.eq_config.bus_index)
 
-    def update_config(self, new_config:EQConfig):
-        self.eq_config = new_config
-
-    def level_to_db(self, raw: float) -> float:
-        raw = max(raw, 1e-9)
-        return 20 * math.log10(raw)
-
-    def load_eq(self, preset_number:int = 0):
+    def _load_eq(self, preset_number:int = 0):
         filename = paths.EQ_PRO_TEMPLATE.format(i=preset_number)
         path = paths.EQ_PRESETS_DIR / filename
         with open(path, 'r') as f:
             file = json.load(f)
         return file
-    
-    def normalize_gain(self, raw_gain):
+
+    def _update_config(self, new_config:EQConfig):
+        self.eq_config = new_config
+
+    def _level_to_db(self, raw: float) -> float:
+        raw = max(raw, 1e-9)
+        return 20 * math.log10(raw)
+
+    def _normalize_gain(self, raw_gain):
         t = (raw_gain - self.eq_config.MIN_DB) / (self.eq_config.MAX_DB - self.eq_config.MIN_DB)
         t = max(0.0, min(1.0, t))
         return t
     
-    def smooth_gain(self, current_gain):
+    def _smooth_gain(self, current_gain):
         if self.smoothed_gain is None:
             self.smoothed_gain = current_gain
             return current_gain
@@ -85,35 +108,56 @@ class AutoEq:
         self.smoothed_gain += (current_gain - self.smoothed_gain) * alpha
         return self.smoothed_gain
         
-    def calculate_smile_gain(self, low, high, normalized_gain):
+    def _calculate_smile_gain(self, low, high, normalized_gain):
         normalized_gain = normalized_gain * normalized_gain
         new_gain = low + (high - low) * normalized_gain
         return new_gain
 
-    def apply_eq(self, bus:int, smoothed_gain:float):
+    def _apply_eq(self, bus:int, smoothed_gain:float):
         eq = self.preset
-        normalized = self.normalize_gain(smoothed_gain)
+        normalized = self._normalize_gain(smoothed_gain)
 
         if self.previous_normalized_gain is not None and abs(normalized - self.previous_normalized_gain) <  0.01:
             return
         
         for band, setting in enumerate(eq):
-            calculated_gain = self.calculate_smile_gain(setting['low_gain'], setting['high_gain'], normalized)
+            calculated_gain = self._calculate_smile_gain(setting['low_gain'], setting['high_gain'], normalized)
             self.controller.set_eq_band(bus, band, freq=setting['freq'], gain=calculated_gain, q=setting['q'], filter_type=setting['type'])
 
         self.previous_normalized_gain = normalized
 
-    def poll_eq(self):
+    def _poll_eq(self):
         left_level, right_level = self.controller.get_stereo_out_live_level(self.eq_config.bus_index)
-        current_gain = self.level_to_db((left_level + right_level)/2)
-        smoothed_gain = self.smooth_gain(current_gain)
+        current_gain = self._level_to_db((left_level + right_level)/2)
+        smoothed_gain = self._smooth_gain(current_gain)
 
-        self.apply_eq(self.eq_config.bus_index, smoothed_gain)
+        self._apply_eq(self.eq_config.bus_index, smoothed_gain)
+
+    def _reset_runtime(self):
+        self.previous_normalized_gain = None
+        self.smoothed_gain = None
 
     async def auto_eq_loop(self):
         while(True):
-            self.poll_eq()
+            try:
+                if not self.enabled:
+                    self._reset_runtime()
+                else:
+                    self._poll_eq()
+            except Exception as e:
+                print(f"AutoEQ Loop Warning: Failed to process frame tick: {e}")
 
             await asyncio.sleep(0.1)
 
+    async def enable_bus(self):
+        print('try')
+        if not self.enabled:
+            print('execute')
+            self.enabled = True
 
+    async def disable_bus(self):
+        if self.enabled:
+            self.enabled = False
+
+    async def get_enabled(self):
+        return self.enabled
